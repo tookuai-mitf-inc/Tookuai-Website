@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+@font-face {
+  font-family: 'Coco Gothic';
+  src: url('/fonts/Coco-Gothic.woff2') format('woff2'),
+       url('/fonts/Coco-Gothic.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Coco Gothic';
+  src: url('/fonts/Coco-Gothic-Light.woff2') format('woff2'),
+       url('/fonts/Coco-Gothic-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@keyframes slideLoop {
+  0% {
+    transform: translateX(100%);
+  }
+  45% {
+    transform: translateX(0);
+  }
+  55% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.slide-animation {
+  animation: slideLoop 8s linear infinite;
+}
