@@ -2,7 +2,6 @@
 //import { Map, CreditCard, Shield, Bell } from 'lucide-react';
 import BenefitCard from '@/components/ride/BenefitCard';
 import "../styles/fonts.css";
-import MapAnimation from '@/components/animations/MapAnimation';
 
 const rideFeatures = [
   {
@@ -33,17 +32,16 @@ const rideFeatures = [
 
 const Ride = () => {
   return (
-    <div className="min-h-screen bg-[#faf9f6] relative">
-      <MapAnimation />
+    <div className="min-h-screen bg-[#f9f9f9] relative">
       {/* Hero Section */}
       <section className="relative min-h-[80vh] flex items-center justify-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h1 className="text-5xl md:text-6xl font-light mb-6 text-[#18181B] leading-tight" style={{ fontFamily: 'Coco Gothic' }}>
+          <h1 className="text-4xl md:text-5xl font-light mb-6 text-[#18181B] leading-tight" style={{ fontFamily: 'Coco Gothic' }}>
             YOUR JOYRIDE.
             <br />
             <span className="text-[#ce1e1e]">LITERALLY.</span>
           </h1>
-          <p className="text-xl md:text-2xl text-[#52525B] font-extralight mb-10" style={{ fontFamily: 'Coco Gothic' }}>
+          <p className="text-lg md:text-xl text-[#52525B] font-extralight mb-10" style={{ fontFamily: 'Coco Gothic' }}>
             ONE TRIP. ONE APP
           </p>
           <div className="frame-1948">

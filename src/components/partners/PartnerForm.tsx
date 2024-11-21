@@ -44,12 +44,14 @@ const individualFormSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email address'),
-  phone: z.string().min(1, 'Phone number is required'),
+  phone: z.string().min(1, 'Phone number is required')
+    .regex(/^\+?[0-9]{10,14}$/, 'Please enter a valid phone number'),
   address: z.string().min(1, 'Address is required'),
   city: z.string().min(1, 'City is required'),
   bankAccountName: z.string().min(1, 'Bank account name is required'),
   bankName: z.string().min(1, 'Please select bank'),
-  bankAccountNumber: z.string().min(1, 'Bank account number is required'),
+  bankAccountNumber: z.string().min(1, 'Bank account number is required')
+    .regex(/^[0-9]{10}$/, 'Bank account number must be 10 digits'),
   idDocument: z.any().optional(),
   carMake: z.string().min(1, 'Car make is required'),
   carModel: z.string().min(1, 'Car model is required'),
@@ -83,6 +85,7 @@ const PartnerForm = () => {
 
   const individualForm = useForm<z.infer<typeof individualFormSchema>>({
     resolver: zodResolver(individualFormSchema),
+    mode: 'onChange',
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -108,6 +111,15 @@ const PartnerForm = () => {
     }
   };
 
+  const handleFormTypeChange = (type: 'individual' | 'company') => {
+    setFormType(type);
+    if (type === 'individual') {
+      individualForm.reset();
+    } else {
+      companyForm.reset();
+    }
+  };
+
   function onSubmit(values: any) {
     console.log(values);
   }
@@ -117,7 +129,7 @@ const PartnerForm = () => {
       {/* Form Type Toggle */}
       <div className="flex justify-center space-x-4 mb-8">
         <button
-          onClick={() => setFormType('company')}
+          onClick={() => handleFormTypeChange('company')}
           className={`px-8 py-3 rounded-full text-lg transition-all duration-300 ${
             formType === 'company'
               ? 'bg-[#18181B] text-white'
@@ -127,7 +139,7 @@ const PartnerForm = () => {
           Company
         </button>
         <button
-          onClick={() => setFormType('individual')}
+          onClick={() => handleFormTypeChange('individual')}
           className={`px-8 py-3 rounded-full text-lg transition-all duration-300 ${
             formType === 'individual'
               ? 'bg-[#18181B] text-white'
@@ -416,14 +428,17 @@ const PartnerForm = () => {
               <FormField
                 control={individualForm.control}
                 name="firstName"
-                render={({ field }) => (
+                render={({ field: { onChange, value, ...rest } }) => (
                   <FormItem>
                     <FormLabel className="text-[#18181B]">First Name</FormLabel>
                     <FormControl>
                       <Input 
+                        type="text"
                         placeholder="Enter first name" 
                         className="bg-white/50 border-[#18181B]/20 focus:border-[#ce1e1e] h-12" 
-                        {...field} 
+                        onChange={onChange}
+                        value={value}
+                        {...rest}
                       />
                     </FormControl>
                     <FormMessage />
@@ -434,14 +449,17 @@ const PartnerForm = () => {
               <FormField
                 control={individualForm.control}
                 name="lastName"
-                render={({ field }) => (
+                render={({ field: { onChange, value, ...rest } }) => (
                   <FormItem>
                     <FormLabel className="text-[#18181B]">Last Name</FormLabel>
                     <FormControl>
                       <Input 
+                        type="text"
                         placeholder="Enter last name" 
                         className="bg-white/50 border-[#18181B]/20 focus:border-[#ce1e1e] h-12" 
-                        {...field} 
+                        onChange={onChange}
+                        value={value}
+                        {...rest}
                       />
                     </FormControl>
                     <FormMessage />
@@ -476,9 +494,14 @@ const PartnerForm = () => {
                     <FormLabel className="text-[#18181B]">Phone Number</FormLabel>
                     <FormControl>
                       <Input 
+                        type="tel"
                         placeholder="Enter phone number" 
                         className="bg-white/50 border-[#18181B]/20 focus:border-[#ce1e1e] h-12" 
                         {...field} 
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9+]/g, '');
+                          field.onChange(value);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -588,9 +611,17 @@ const PartnerForm = () => {
                     <FormLabel className="text-[#18181B]">Bank Account Number</FormLabel>
                     <FormControl>
                       <Input 
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         placeholder="Enter bank account number" 
                         className="bg-white/50 border-[#18181B]/20 focus:border-[#ce1e1e] h-12" 
+                        maxLength={10}
                         {...field} 
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          field.onChange(value);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
