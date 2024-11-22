@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { toast } from 'sonner';
+import { submitPartnerRequest } from '@/services/partner.service';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +24,10 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+
+// Type definitions for form values
+type CompanyFormValues = z.infer<typeof companyFormSchema>;
+type IndividualFormValues = z.infer<typeof individualFormSchema>;
 
 const companyFormSchema = z.object({
   companyName: z.string().min(1, 'Company name is required'),
@@ -50,7 +56,9 @@ const individualFormSchema = z.object({
   bankAccountName: z.string().min(1, 'Bank account name is required'),
   bankName: z.string().min(1, 'Please select bank'),
   bankAccountNumber: z.string().min(1, 'Bank account number is required'),
-  idDocument: z.any().optional(),
+  idDocument: z
+    .instanceof(File, { message: 'Please upload a valid ID document' })
+    .optional(),
   carMake: z.string().min(1, 'Car make is required'),
   carModel: z.string().min(1, 'Car model is required'),
   carYear: z.string().min(1, 'Car year is required'),
@@ -62,8 +70,9 @@ const individualFormSchema = z.object({
 
 const PartnerForm = () => {
   const [formType, setFormType] = useState<'individual' | 'company'>('company');
-  
-  const companyForm = useForm<z.infer<typeof companyFormSchema>>({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const companyForm = useForm<CompanyFormValues>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
       companyName: '',
@@ -79,9 +88,10 @@ const PartnerForm = () => {
       termsAccepted: false,
       message: '',
     },
+    mode: 'onChange',
   });
 
-  const individualForm = useForm<z.infer<typeof individualFormSchema>>({
+  const individualForm = useForm<IndividualFormValues>({
     resolver: zodResolver(individualFormSchema),
     defaultValues: {
       firstName: '',
@@ -100,6 +110,7 @@ const PartnerForm = () => {
       termsAccepted: false,
       message: '',
     },
+    mode: 'onChange',
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (...event: any[]) => void) => {
@@ -108,8 +119,65 @@ const PartnerForm = () => {
     }
   };
 
-  function onSubmit(values: any) {
-    console.log(values);
+  async function onSubmit(values: CompanyFormValues | IndividualFormValues) {
+    try {
+      setIsSubmitting(true);
+      
+      // Type guard to check form type
+      const isCompanyForm = (values: CompanyFormValues | IndividualFormValues): values is CompanyFormValues => {
+        return 'companyName' in values;
+      };
+      
+      // Prepare the data based on form type
+      const formData = isCompanyForm(values)
+        ? {
+            companyName: values.companyName,
+            contactName: values.contactName,
+            email: values.email,
+            phone: values.phone,
+            address: values.address,
+            city: values.city,
+            fleetSize: values.fleetSize,
+            bankAccountName: values.bankAccountName,
+            bankName: values.bankName,
+            bankAccountNumber: values.bankAccountNumber,
+            message: values.message,
+            termsAccepted: values.termsAccepted
+          }
+        : {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            phone: values.phone,
+            address: values.address,
+            city: values.city,
+            bankAccountName: values.bankAccountName,
+            bankName: values.bankName,
+            bankAccountNumber: values.bankAccountNumber,
+            carMake: values.carMake,
+            carModel: values.carModel,
+            carYear: values.carYear,
+            message: values.message,
+            termsAccepted: values.termsAccepted,
+            idDocument: values.idDocument
+          };
+
+      await submitPartnerRequest(formData);
+      toast.success('Partner request submitted successfully!');
+      
+      // Reset the form
+      if (isCompanyForm(values)) {
+        companyForm.reset();
+      } else {
+        individualForm.reset();
+      }
+      
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Failed to submit partner request. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -117,7 +185,12 @@ const PartnerForm = () => {
       {/* Form Type Toggle */}
       <div className="flex justify-center space-x-4 mb-8">
         <button
-          onClick={() => setFormType('company')}
+          type="button"
+          onClick={() => {
+            if (formType !== 'company') {
+              setFormType('company');
+            }
+          }}
           className={`px-8 py-3 rounded-full text-lg transition-all duration-300 ${
             formType === 'company'
               ? 'bg-[#18181B] text-white'
@@ -127,7 +200,12 @@ const PartnerForm = () => {
           Company
         </button>
         <button
-          onClick={() => setFormType('individual')}
+          type="button"
+          onClick={() => {
+            if (formType !== 'individual') {
+              setFormType('individual');
+            }
+          }}
           className={`px-8 py-3 rounded-full text-lg transition-all duration-300 ${
             formType === 'individual'
               ? 'bg-[#18181B] text-white'
@@ -138,7 +216,8 @@ const PartnerForm = () => {
         </button>
       </div>
 
-      {formType === 'company' ? (
+      {/* Company Form */}
+      {formType === 'company' && (
         <Form {...companyForm}>
           <form onSubmit={companyForm.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -400,16 +479,20 @@ const PartnerForm = () => {
             <div className="flex justify-center pt-6">
               <Button 
                 type="submit"
+                disabled={isSubmitting}
                 className="group h-[70px] px-16 border border-[#18181B] rounded-[60px] bg-transparent hover:border-[#ce1e1e] hover:bg-transparent transition-all duration-300"
               >
                 <span className="text-[#18181B] text-[20px] leading-[120%] font-normal group-hover:text-[#ce1e1e] transition-colors duration-300" style={{ fontFamily: 'Inter' }}>
-                  Submit Application
+                  {isSubmitting ? 'Submitting...' : 'Submit Application'}
                 </span>
               </Button>
             </div>
           </form>
         </Form>
-      ) : (
+      )}
+
+      {/* Individual Form */}
+      {formType === 'individual' && (
         <Form {...individualForm}>
           <form onSubmit={individualForm.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -736,10 +819,11 @@ const PartnerForm = () => {
             <div className="flex justify-center pt-6">
               <Button 
                 type="submit"
+                disabled={isSubmitting}
                 className="group h-[70px] px-16 border border-[#18181B] rounded-[60px] bg-transparent hover:border-[#ce1e1e] hover:bg-transparent transition-all duration-300"
               >
                 <span className="text-[#18181B] text-[20px] leading-[120%] font-normal group-hover:text-[#ce1e1e] transition-colors duration-300" style={{ fontFamily: 'Inter' }}>
-                  Submit Application
+                  {isSubmitting ? 'Submitting...' : 'Submit Application'}
                 </span>
               </Button>
             </div>
