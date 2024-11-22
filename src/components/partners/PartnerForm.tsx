@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { toast } from 'sonner';
+import { submitPartnerRequest } from '@/services/partner.service';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +24,10 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+
+// Type definitions for form values
+type CompanyFormValues = z.infer<typeof companyFormSchema>;
+type IndividualFormValues = z.infer<typeof individualFormSchema>;
 
 const companyFormSchema = z.object({
   companyName: z.string().min(1, 'Company name is required'),
@@ -44,15 +50,15 @@ const individualFormSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email address'),
-  phone: z.string().min(1, 'Phone number is required')
-    .regex(/^\+?[0-9]{10,14}$/, 'Please enter a valid phone number'),
+  phone: z.string().min(1, 'Phone number is required'),
   address: z.string().min(1, 'Address is required'),
   city: z.string().min(1, 'City is required'),
   bankAccountName: z.string().min(1, 'Bank account name is required'),
   bankName: z.string().min(1, 'Please select bank'),
-  bankAccountNumber: z.string().min(1, 'Bank account number is required')
-    .regex(/^[0-9]{10}$/, 'Bank account number must be 10 digits'),
-  idDocument: z.any().optional(),
+  bankAccountNumber: z.string().min(1, 'Bank account number is required'),
+  idDocument: z
+    .instanceof(File, { message: 'Please upload a valid ID document' })
+    .optional(),
   carMake: z.string().min(1, 'Car make is required'),
   carModel: z.string().min(1, 'Car model is required'),
   carYear: z.string().min(1, 'Car year is required'),
@@ -64,8 +70,9 @@ const individualFormSchema = z.object({
 
 const PartnerForm = () => {
   const [formType, setFormType] = useState<'individual' | 'company'>('company');
-  
-  const companyForm = useForm<z.infer<typeof companyFormSchema>>({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const companyForm = useForm<CompanyFormValues>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
       companyName: '',
@@ -81,11 +88,11 @@ const PartnerForm = () => {
       termsAccepted: false,
       message: '',
     },
+    mode: 'onChange',
   });
 
-  const individualForm = useForm<z.infer<typeof individualFormSchema>>({
+  const individualForm = useForm<IndividualFormValues>({
     resolver: zodResolver(individualFormSchema),
-    mode: 'onChange',
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -103,6 +110,7 @@ const PartnerForm = () => {
       termsAccepted: false,
       message: '',
     },
+    mode: 'onChange',
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (...event: any[]) => void) => {
@@ -111,17 +119,65 @@ const PartnerForm = () => {
     }
   };
 
-  const handleFormTypeChange = (type: 'individual' | 'company') => {
-    setFormType(type);
-    if (type === 'individual') {
-      individualForm.reset();
-    } else {
-      companyForm.reset();
-    }
-  };
+  async function onSubmit(values: CompanyFormValues | IndividualFormValues) {
+    try {
+      setIsSubmitting(true);
+      
+      // Type guard to check form type
+      const isCompanyForm = (values: CompanyFormValues | IndividualFormValues): values is CompanyFormValues => {
+        return 'companyName' in values;
+      };
+      
+      // Prepare the data based on form type
+      const formData = isCompanyForm(values)
+        ? {
+            companyName: values.companyName,
+            contactName: values.contactName,
+            email: values.email,
+            phone: values.phone,
+            address: values.address,
+            city: values.city,
+            fleetSize: values.fleetSize,
+            bankAccountName: values.bankAccountName,
+            bankName: values.bankName,
+            bankAccountNumber: values.bankAccountNumber,
+            message: values.message,
+            termsAccepted: values.termsAccepted
+          }
+        : {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            phone: values.phone,
+            address: values.address,
+            city: values.city,
+            bankAccountName: values.bankAccountName,
+            bankName: values.bankName,
+            bankAccountNumber: values.bankAccountNumber,
+            carMake: values.carMake,
+            carModel: values.carModel,
+            carYear: values.carYear,
+            message: values.message,
+            termsAccepted: values.termsAccepted,
+            idDocument: values.idDocument
+          };
 
-  function onSubmit(values: any) {
-    console.log(values);
+      await submitPartnerRequest(formData);
+      toast.success('Partner request submitted successfully!');
+      
+      // Reset the form
+      if (isCompanyForm(values)) {
+        companyForm.reset();
+      } else {
+        individualForm.reset();
+      }
+      
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Failed to submit partner request. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -129,7 +185,12 @@ const PartnerForm = () => {
       {/* Form Type Toggle */}
       <div className="flex justify-center space-x-4 mb-8">
         <button
-          onClick={() => handleFormTypeChange('company')}
+          type="button"
+          onClick={() => {
+            if (formType !== 'company') {
+              setFormType('company');
+            }
+          }}
           className={`px-8 py-3 rounded-full text-lg transition-all duration-300 ${
             formType === 'company'
               ? 'bg-[#18181B] text-white'
@@ -139,7 +200,12 @@ const PartnerForm = () => {
           Company
         </button>
         <button
-          onClick={() => handleFormTypeChange('individual')}
+          type="button"
+          onClick={() => {
+            if (formType !== 'individual') {
+              setFormType('individual');
+            }
+          }}
           className={`px-8 py-3 rounded-full text-lg transition-all duration-300 ${
             formType === 'individual'
               ? 'bg-[#18181B] text-white'
@@ -150,7 +216,8 @@ const PartnerForm = () => {
         </button>
       </div>
 
-      {formType === 'company' ? (
+      {/* Company Form */}
+      {formType === 'company' && (
         <Form {...companyForm}>
           <form onSubmit={companyForm.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -412,33 +479,34 @@ const PartnerForm = () => {
             <div className="flex justify-center pt-6">
               <Button 
                 type="submit"
+                disabled={isSubmitting}
                 className="group h-[70px] px-16 border border-[#18181B] rounded-[60px] bg-transparent hover:border-[#ce1e1e] hover:bg-transparent transition-all duration-300"
               >
                 <span className="text-[#18181B] text-[20px] leading-[120%] font-normal group-hover:text-[#ce1e1e] transition-colors duration-300" style={{ fontFamily: 'Inter' }}>
-                  Submit Application
+                  {isSubmitting ? 'Submitting...' : 'Submit Application'}
                 </span>
               </Button>
             </div>
           </form>
         </Form>
-      ) : (
+      )}
+
+      {/* Individual Form */}
+      {formType === 'individual' && (
         <Form {...individualForm}>
           <form onSubmit={individualForm.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={individualForm.control}
                 name="firstName"
-                render={({ field: { onChange, value, ...rest } }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-[#18181B]">First Name</FormLabel>
                     <FormControl>
                       <Input 
-                        type="text"
                         placeholder="Enter first name" 
                         className="bg-white/50 border-[#18181B]/20 focus:border-[#ce1e1e] h-12" 
-                        onChange={onChange}
-                        value={value}
-                        {...rest}
+                        {...field} 
                       />
                     </FormControl>
                     <FormMessage />
@@ -449,17 +517,14 @@ const PartnerForm = () => {
               <FormField
                 control={individualForm.control}
                 name="lastName"
-                render={({ field: { onChange, value, ...rest } }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-[#18181B]">Last Name</FormLabel>
                     <FormControl>
                       <Input 
-                        type="text"
                         placeholder="Enter last name" 
                         className="bg-white/50 border-[#18181B]/20 focus:border-[#ce1e1e] h-12" 
-                        onChange={onChange}
-                        value={value}
-                        {...rest}
+                        {...field} 
                       />
                     </FormControl>
                     <FormMessage />
@@ -494,14 +559,9 @@ const PartnerForm = () => {
                     <FormLabel className="text-[#18181B]">Phone Number</FormLabel>
                     <FormControl>
                       <Input 
-                        type="tel"
                         placeholder="Enter phone number" 
                         className="bg-white/50 border-[#18181B]/20 focus:border-[#ce1e1e] h-12" 
                         {...field} 
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9+]/g, '');
-                          field.onChange(value);
-                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -611,17 +671,9 @@ const PartnerForm = () => {
                     <FormLabel className="text-[#18181B]">Bank Account Number</FormLabel>
                     <FormControl>
                       <Input 
-                        type="text"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
                         placeholder="Enter bank account number" 
                         className="bg-white/50 border-[#18181B]/20 focus:border-[#ce1e1e] h-12" 
-                        maxLength={10}
                         {...field} 
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9]/g, '');
-                          field.onChange(value);
-                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -767,10 +819,11 @@ const PartnerForm = () => {
             <div className="flex justify-center pt-6">
               <Button 
                 type="submit"
+                disabled={isSubmitting}
                 className="group h-[70px] px-16 border border-[#18181B] rounded-[60px] bg-transparent hover:border-[#ce1e1e] hover:bg-transparent transition-all duration-300"
               >
                 <span className="text-[#18181B] text-[20px] leading-[120%] font-normal group-hover:text-[#ce1e1e] transition-colors duration-300" style={{ fontFamily: 'Inter' }}>
-                  Submit Application
+                  {isSubmitting ? 'Submitting...' : 'Submit Application'}
                 </span>
               </Button>
             </div>
