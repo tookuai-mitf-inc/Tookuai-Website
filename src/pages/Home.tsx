@@ -56,16 +56,26 @@ const Home: React.FC = () => {
           REQUEST AND ARRIVE IN COMFORT CONVENIENCE AND STYLE
         </p>
         <div className="frame-1948">
-          <div className="button-primary-with-icon">
+          <a 
+            href="https://apps.apple.com/ng/app/tookuai/id6477813473" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="button-primary-with-icon"
+          >
             <div className="frame-1">
               <p className="button-name">Download for IOS</p>
             </div>
-          </div>
-          <div className="button-primary-with-icon-1">
+          </a>
+          <a 
+            href="https://play.google.com/store/apps/details?id=com.tookuai.order&hl=en" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="button-primary-with-icon-1"
+          >
             <div className="frame-11">
               <p className="button-name-1">Download for Android</p>
             </div>
-          </div>
+          </a>
         </div>
         <div className="iphone-frame">
           <video 
