@@ -2,6 +2,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import "../styles/Home.css";
+import rideImage from "../assets/images/ride.jpg";
+import partnerImage from "../assets/images/partner.jpeg";
+import corporateImage from "../assets/images/corporate.jpg";
 
 const Particles = () => {
   const particles = Array.from({ length: 50 }, (_, i) => ({
@@ -85,21 +88,21 @@ const Home: React.FC = () => {
           <div className="features-grid">
             <Link to="/ride" className="feature-card">
               <div className="feature-image">
-                <img src="/src/assets/images/ride.jpg" alt="RIDE" />
+                <img src={rideImage} alt="RIDE" />
               </div>
               <h3>RIDE</h3>
               <p>Unleash Your Imagination: Book a Batmobile in Minutes.</p>
             </Link>
             <Link to="/partners" className="feature-card">
               <div className="feature-image">
-                <img src="/src/assets/images/partner.jpeg" alt="Partner" />
+                <img src={partnerImage} alt="Partner" />
               </div>
               <h3>YOUR CAR, YOUR PROFITS</h3>
               <p>The Premium Solution for Monetizing Your Luxury Vehicle as a Partner.</p>
             </Link>
             <Link to="/corporate" className="feature-card">
               <div className="feature-image">
-                <img src="/src/assets/images/corporate.jpg" alt="Corporate" />
+                <img src={corporateImage} alt="Corporate" />
               </div>
               <h3>CORPORATE</h3>
               <p>Tailored transportation solutions for businesses, featuring employee rides and corporate event services.</p>
