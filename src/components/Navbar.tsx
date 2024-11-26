@@ -34,19 +34,24 @@ const Navbar: React.FC = () => {
             </button>
 
             {/* Download Button - Always Visible */}
-            <button className="flex justify-center items-center h-[45px] px-6 border border-[#A1A1AA] rounded-[30px] hover:border-[#ce1e1e] hover:text-[#ce1e1e] transition-colors">
+            <Link to="/#first-section" className="flex justify-center items-center h-[45px] px-6 border border-[#A1A1AA] rounded-[30px] hover:border-[#ce1e1e] hover:text-[#ce1e1e] transition-colors">
               <span style={{ fontFamily: 'Inter' }} className="text-[#18181B] text-[19px] leading-[150%] font-light group-hover:text-[#ce1e1e] tracking-wide">
                 Download now
               </span>
-            </button>
+            </Link>
 
             {/* Mae AI Button */}
-            <button className="flex justify-center items-center h-[45px] px-6 border border-[#A1A1AA] rounded-[30px] hover:border-[#ce1e1e] transition-all duration-300 group">
+            <a 
+              href="https://ai-mae.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex justify-center items-center h-[45px] px-6 border border-[#A1A1AA] rounded-[30px] hover:border-[#ce1e1e] transition-all duration-300 group"
+            >
               <img src="/images/ai.svg" alt="AI" className="w-5 h-5" />
               <span style={{ fontFamily: 'Inter' }} className="text-[#18181B] text-base leading-[150%] font-light ml-2 group-hover:text-[#ce1e1e]">
                 Mae
               </span>
-            </button>
+            </a>
           </div>
         </div>
 
@@ -82,19 +87,24 @@ const Navbar: React.FC = () => {
                 </button>
 
                 {/* Download Button in Menu */}
-                <button className="flex justify-center items-center h-[45px] px-6 border border-[#A1A1AA] rounded-[30px] hover:border-[#ce1e1e] hover:text-[#ce1e1e] transition-colors">
+                <Link to="/#first-section" className="flex justify-center items-center h-[45px] px-6 border border-[#A1A1AA] rounded-[30px] hover:border-[#ce1e1e] hover:text-[#ce1e1e] transition-colors">
                   <span style={{ fontFamily: 'Inter' }} className="text-[#18181B] text-[19px] leading-[150%] font-light group-hover:text-[#ce1e1e] tracking-wide">
                     Download now
                   </span>
-                </button>
+                </Link>
 
                 {/* Mae AI Button in Menu */}
-                <button className="flex justify-center items-center h-[45px] px-6 border border-[#A1A1AA] rounded-[30px] hover:border-[#ce1e1e] transition-all duration-300 group">
+                <a 
+                  href="https://ai-mae.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex justify-center items-center h-[45px] px-6 border border-[#A1A1AA] rounded-[30px] hover:border-[#ce1e1e] transition-all duration-300 group"
+                >
                   <img src="/images/ai.svg" alt="AI" className="w-5 h-5" />
                   <span style={{ fontFamily: 'Inter' }} className="text-[#18181B] text-base leading-[150%] font-light ml-2 group-hover:text-[#ce1e1e]">
                     Mae
                   </span>
-                </button>
+                </a>
               </div>
             </div>
 
@@ -126,7 +136,7 @@ const Navbar: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
                 className="text-[#18181B] text-2xl leading-[150%] font-light hover:text-[#ce1e1e] transition-colors"
               >
-                BECOME A PILOT
+                PILOTS
               </Link>
             </div>
           </div>
