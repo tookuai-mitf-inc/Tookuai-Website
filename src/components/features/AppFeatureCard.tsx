@@ -51,7 +51,7 @@ const AppFeatureCard: React.FC<AppFeatureCardProps> = ({ title, description, ico
       transition: {
         duration: 0.3,
         repeat: Infinity,
-        repeatType: "reverse"
+        repeatType: "loop" as const
       }
     }
   };
@@ -63,6 +63,7 @@ const AppFeatureCard: React.FC<AppFeatureCardProps> = ({ title, description, ico
       transition: {
         duration: 2,
         repeat: Infinity,
+        repeatType: "loop" as const
       }
     }
   };

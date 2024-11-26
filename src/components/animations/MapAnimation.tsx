@@ -16,7 +16,7 @@ const MapAnimation = () => {
         duration: 3,
         ease: "easeInOut",
         repeat: Infinity,
-        repeatType: "reverse",
+        repeatType: "loop" as const,
       }
     }
   };
