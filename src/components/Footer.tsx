@@ -10,11 +10,21 @@ const Footer: React.FC = () => {
           <div className="footer-section">
             <h3>DOWNLOAD THE APP</h3>
             <div className="footer-links">
-              <a href="#" className="footer-link">
+              <a 
+                href="https://apps.apple.com/ng/app/tookuai/id6477813473" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="footer-link"
+              >
                 <span className="link-text">iOS App</span>
                 <span className="link-line"></span>
               </a>
-              <a href="#" className="footer-link">
+              <a 
+                href="https://play.google.com/store/apps/details?id=com.tookuai.order&hl=en" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="footer-link"
+              >
                 <span className="link-text">Android App</span>
                 <span className="link-line"></span>
               </a>
@@ -83,7 +93,7 @@ const Footer: React.FC = () => {
       
       <div className="footer-bottom">
         <div className="copyright">
-          <span> © 2024 Tookuài Inc. All rights reserved.</span>
+          <span> 2024 Tookuài Inc. All rights reserved.</span>
         </div>
       </div>
     </footer>
