@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
 
             {/* Mae AI Button */}
             <a 
-              href="https://ai-mae.vercel.app/"
+              href="https://ai-mae.tookuai.co"
               target="_blank"
               rel="noopener noreferrer"
               className="flex justify-center items-center h-[45px] px-6 border border-[#A1A1AA] rounded-[30px] hover:border-[#ce1e1e] transition-all duration-300 group"
