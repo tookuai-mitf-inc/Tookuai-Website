@@ -36,7 +36,7 @@ const Ride = () => {
       {/* Hero Section */}
       <section className="relative min-h-[80vh] flex items-center justify-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h1 className="text-4xl md:text-5xl font-light mb-6 text-[#18181B] leading-tight" style={{ fontFamily: 'Coco Gothic' }}>
+          <h1 className="text-4xl md:text-5xl font-light mb-6 text-[#18181B] leading-tight mobile-text" style={{ fontFamily: 'Coco Gothic' }}>
             YOUR JOYRIDE.
             <br />
             <span className="text-[#ce1e1e]">LITERALLY.</span>
@@ -50,7 +50,7 @@ const Ride = () => {
                 <p className="button-name">Download for IOS</p>
               </div>
             </div>
-            <div className="button-primary-with-icon-1">
+            <div className="button-primary-with-icon-1" style={{ marginBottom: '0.5px' }}>
               <div className="frame-11">
                 <p className="button-name-1">Download for Android</p>
               </div>
@@ -60,15 +60,15 @@ const Ride = () => {
       </section>
 
       {/* Features Section */}
-      <section className="relative py-40">
+      <section className="relative py-1">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-transparent pointer-events-none" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-2xl mx-auto mb-24">
-            <h2 className="text-3xl font-light mb-6 text-[#18181B]" style={{ fontFamily: 'Coco Gothic' }}>
+            <h2 className="text-3xl font-light mb-4 text-[#18181B] mobile-text" style={{ fontFamily: 'Coco Gothic' }}>
               EXPERIENCE LUXURY IN MOTION
             </h2>
-            <div className="w-12 h-[1px] bg-[#ce1e1e] mx-auto mb-6" />
+            <div className="w-12 h-[1px] bg-[#ce1e1e] mx-auto mb-3" />
             <p className="text-lg text-[#52525B] font-light leading-relaxed" style={{ fontFamily: 'Inter' }}>
               Discover a world of premium features designed to make every journey exceptional.
             </p>

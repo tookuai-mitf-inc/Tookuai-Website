@@ -2,17 +2,15 @@
 
 @font-face {
   font-family: 'Coco Gothic';
-  src: url('/fonts/Coco-Gothic.woff2') format('woff2'),
-       url('/fonts/Coco-Gothic.woff') format('woff');
+  src: url('/fonts/CocoGothic-Light_trial.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Coco Gothic';
-  src: url('/fonts/Coco-Gothic-Light.woff2') format('woff2'),
-       url('/fonts/Coco-Gothic-Light.woff') format('woff');
-  font-weight: 300;
+  font-family: 'Coco Gothic Light';
+  src: url('/fonts/CocoGothic-Light_trial.ttf') format('truetype');
+  font-weight: normal;
   font-style: normal;
 }
 
