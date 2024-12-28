@@ -8,7 +8,7 @@ body {
 
 .frame-1949 {
   position: relative;
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   padding: 120px 0;
   background-color: #faf9f6;
@@ -99,7 +99,7 @@ body {
 
 .request-and-arrive-in-co {
   color: rgba(24, 24, 27, 1);
-  font-size: 42px;
+  font-size: 24px;
   line-height: 120%;
   font-family: "Coco Gothic", sans-serif;
   font-weight: 300;
@@ -107,6 +107,12 @@ body {
   max-width: 600px;
   z-index: 2;
   margin-bottom: 32px;
+}
+
+@media (min-width: 769px) {
+  .request-and-arrive-in-co {
+    font-size: 40px;
+  }
 }
 
 .frame-1948 {
@@ -196,7 +202,6 @@ body {
   }
 
   .request-and-arrive-in-co {
-    font-size: 32px;
     padding: 0 20px;
     margin-bottom: 24px;
   }
@@ -220,10 +225,6 @@ body {
 }
 
 @media (max-width: 480px) {
-  .request-and-arrive-in-co {
-    font-size: 24px;
-  }
-
   .button-primary-with-icon,
   .button-primary-with-icon-1 {
     width: 220px;
@@ -351,7 +352,6 @@ body {
 
 @media (max-width: 1200px) {
   .request-and-arrive-in-co {
-    font-size: 36px;
     max-width: 500px;
   }
 
@@ -388,6 +388,16 @@ body {
 
   .feature-card h3 {
     font-size: 20px;
+  }
+}
+
+.mobile-text {
+  font-size: 24px !important; /* Font size for mobile screens */
+}
+
+@media (min-width: 769px) {
+  .mobile-text {
+    font-size: 40px !important; /* Font size for desktop screens */
   }
 }
 

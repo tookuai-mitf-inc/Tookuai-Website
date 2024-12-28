@@ -1,9 +1,6 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
-import forms from '@tailwindcss/forms';
-import aspectRatio from '@tailwindcss/aspect-ratio';
-import typography from '@tailwindcss/typography';
-
 /** @type {import('tailwindcss').Config} */
+import defaultTheme from 'tailwindcss/defaultTheme'
+
 export default {
   darkMode: ["class"],
   content: [
