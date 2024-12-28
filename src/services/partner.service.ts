@@ -23,49 +23,64 @@ export interface PartnerFormData {
 
 export const submitPartnerRequest = async (formData: PartnerFormData): Promise<any> => {
   try {
-    console.log('API_URL:', API_URL);
-    console.log('Environment:', import.meta.env);
-    
     const { termsAccepted, idDocument, ...data } = formData;
     
-    // Create FormData instance
-    const form = new FormData();
-    
-    // Add all fields to FormData
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        form.append(key, String(value));
-      }
-    });
-    
-    // Add file if present
+    // If there's an ID document, use FormData
     if (idDocument) {
-      console.log('Adding file to form:', {
-        name: idDocument.name,
-        type: idDocument.type,
-        size: idDocument.size
+      console.log('Preparing form data with file:', {
+        fileName: idDocument.name,
+        fileSize: idDocument.size,
+        fileType: idDocument.type
       });
-      form.append('idDocument', idDocument, idDocument.name);
+      
+      const form = new FormData();
+      
+      // Add the file
+      form.append('idDocument', idDocument);
+      
+      // Add all other fields individually to FormData
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          form.append(key, String(value));
+        }
+      });
+      
+      console.log('Submitting form with file...');
+      
+      const response = await fetch(`${API_URL}/partners`, {
+        method: 'POST',
+        body: form
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit partner request');
+      }
+
+      console.log('Form submitted successfully with file');
+      return await response.json();
     }
     
-    console.log('Submitting form data to:', `${API_URL}/partners`);
-    console.log('Form fields:', Array.from(form.keys()));
+    // If no ID document, send as regular JSON
+    console.log('Submitting form without file...');
     
     const response = await fetch(`${API_URL}/partners`, {
       method: 'POST',
-      body: form
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'Failed to submit partner request' }));
+      const errorData = await response.json();
       throw new Error(errorData.message || 'Failed to submit partner request');
     }
 
-    console.log('Form submitted successfully');
+    console.log('Form submitted successfully without file');
     return await response.json();
   } catch (error) {
     console.error('Error submitting partner request:', error);
     throw error;
   }
 };
- 
